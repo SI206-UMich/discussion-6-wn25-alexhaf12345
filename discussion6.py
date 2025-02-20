@@ -19,6 +19,20 @@ def load_csv(f):
     full_path = os.path.join(base_path, f)
     # use this 'full_path' variable as the file that you open
 
+    data = {}  
+    with open(full_path, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        headers = next(reader)  
+
+        for row in reader:
+            year = row[0]  
+            data[year] = {}  
+
+            for i in range(1, len(row)):  
+                month = headers[i]  
+                data[year][month] = row[i] 
+
+    return data
 def get_annual_max(d):
     '''
     Params:
