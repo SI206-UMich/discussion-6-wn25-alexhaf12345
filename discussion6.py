@@ -5,52 +5,52 @@ import csv
 def load_csv(f):
     '''
     Params: 
-        f, name or path or CSV file: string
+        f, name or path of CSV file (string)
 
     Returns:
-        nested dict structure from csv
-        outer keys are (str) years, values are dicts
-        inner keys are (str) months, values are (str) integers
-    
+        Nested dict structure from CSV
+        - Outer dict keys: (str) years, values: dicts
+        - Inner dict keys: (str) months, values: (str) integers
+
     Note: Don't strip or otherwise modify strings. Don't change datatypes from strings. 
     '''
-
     base_path = os.path.abspath(os.path.dirname(__file__))
     full_path = os.path.join(base_path, f)
-    # use this 'full_path' variable as the file that you open
 
-    data = {}  
+    data = {}
+
     with open(full_path, newline='') as csvfile:
         reader = csv.reader(csvfile)
         headers = next(reader)  
 
         for row in reader:
-            year = row[0]  
-            data[year] = {}  
-
+            month = row[0].strip()  
             for i in range(1, len(row)):  
-                month = headers[i]  
-                data[year][month] = row[i] 
+                year = headers[i].strip()  
+                if year not in data:
+                    data[year] = {}  
+                data[year][month] = row[i].strip() 
 
     return data
+
 def get_annual_max(d):
     '''
     Params:
         d, dict created by load_csv above
 
     Returns:
-        list of tuples, each with 3 items: year (str), month (str), and max (int) 
-        max is the maximum value for a month in that year, month is the corresponding month
+        List of tuples, each with 3 items: (year, month, max_value)
+        - max_value is the maximum value for a month in that year.
+        - month is the corresponding month.
 
-    Note: Don't strip or otherwise modify strings. Do not change datatypes except where necessary.
-        You'll have to change vals to int to compare them. 
+    Note: You'll have to change vals to int to compare them. 
     '''
     result = []
 
     for year, months in d.items():
-        max_month = max(months, key=lambda m: int(months[m]))  
+        max_month = max(months, key=lambda m: int(months[m])) 
         max_value = int(months[max_month])  
-        result.append((year, max_month, max_value))
+        result.append((year, max_month, max_value))  
 
     return result
 
@@ -60,17 +60,19 @@ def get_month_avg(d):
         d, dict created by load_csv above
 
     Returns:
-        dict where keys are years and vals are floats rounded to nearest whole num or int
-        vals are the average vals for months in the year
+        Dict where:
+        - Keys are years
+        - Values are floats rounded to the nearest whole number (int)
+          - These values represent the average visitors per month in that year.
 
-    Note: Don't strip or otherwise modify strings. Do not change datatypes except where necessary. 
-        You'll have to make the vals int or float here and round the avg to pass tests.
+    Note: Don't strip or otherwise modify strings. Do not change datatypes except where necessary.
+          You'll have to make the vals int or float here and round the avg to pass tests.
     '''
     avg_dict = {}
 
     for year, months in d.items():
         values = [int(val) for val in months.values()]  
-        avg_dict[year] = round(sum(values) / len(values)) 
+        avg_dict[year] = round(sum(values) / len(values))  
 
     return avg_dict
 
@@ -98,3 +100,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
